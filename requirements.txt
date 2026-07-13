@@ -1,9 +1,14 @@
 # ==========================
-# FastAPI Backend
+# FastAPI
 # ==========================
 fastapi
-uvicorn[standard]
-python-multipart
+uvicorn
+
+# ==========================
+# Streamlit
+# ==========================
+streamlit
+requests
 
 # ==========================
 # Environment Variables
@@ -16,7 +21,7 @@ python-dotenv
 google-genai
 
 # ==========================
-# Neo4j Aura
+# Neo4j
 # ==========================
 neo4j
 
@@ -26,34 +31,25 @@ neo4j
 chromadb
 
 # ==========================
-# Embeddings & AI
+# Embeddings
 # ==========================
-numpy
+sentence-transformers
 
 # ==========================
-# Document Processing
+# Data Processing
 # ==========================
-docling
+pandas
+openpyxl
+
+# ==========================
+# PDF / DOCX / PPT
+# ==========================
 pypdf
 python-docx
 python-pptx
-openpyxl
-pandas
-
-# ==========================
-# JSON Validation
-# ==========================
-pydantic
-
-# ==========================
-# LangGraph & LangChain
-# ==========================
-langchain
-langgraph
 
 # ==========================
 # Utilities
 # ==========================
+numpy
 tqdm
-requests
-orjson
