@@ -1,0 +1,34 @@
+{
+  "people": [
+    {
+      "name": "John Smith",
+      "explanation": "Finance Manager, handles Q4 budget approvals.",
+      "email": "john.smith@company.com"
+    },
+    {
+      "name": "Jane Doe",
+      "explanation": "HR Lead, point of contact for onboarding.",
+      "email": "jane.doe@company.com"
+    },
+    {
+      "name": "Sarah Wilson",
+      "explanation": "Marketing Manager leading digital campaigns across regions.",
+      "email": "sarah.wilson@company.com"
+    },
+    {
+      "name": "David Miller",
+      "explanation": "Cybersecurity Specialist managing security audits and compliance.",
+      "email": "david.miller@company.com"
+    },
+    {
+      "name": "Sophia Jackson",
+      "explanation": "UI/UX Designer creating user-centric interfaces for web applications.",
+      "email": "sophia.jackson@company.com"
+    },
+    {
+      "name": "Mia Young",
+      "explanation": "Training Coordinator organizing employee learning programs.",
+      "email": "mia.young@company.com"
+    }
+  ]
+}

@@ -1,0 +1,59 @@
+# ==========================
+# FastAPI Backend
+# ==========================
+fastapi
+uvicorn[standard]
+python-multipart
+
+# ==========================
+# Environment Variables
+# ==========================
+python-dotenv
+
+# ==========================
+# Google Gemini
+# ==========================
+google-genai
+
+# ==========================
+# Neo4j Aura
+# ==========================
+neo4j
+
+# ==========================
+# Vector Database
+# ==========================
+chromadb
+
+# ==========================
+# Embeddings & AI
+# ==========================
+numpy
+
+# ==========================
+# Document Processing
+# ==========================
+docling
+pypdf
+python-docx
+python-pptx
+openpyxl
+pandas
+
+# ==========================
+# JSON Validation
+# ==========================
+pydantic
+
+# ==========================
+# LangGraph & LangChain
+# ==========================
+langchain
+langgraph
+
+# ==========================
+# Utilities
+# ==========================
+tqdm
+requests
+orjson
