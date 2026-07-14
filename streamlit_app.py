@@ -5,8 +5,10 @@ Enterprise Knowledge Graph &
 Hybrid GraphRAG Platform
 """
 
-import streamlit as st
+from pathlib import Path
+
 import requests
+import streamlit as st
 
 # ---------------------------------------------------
 # Configuration
@@ -39,6 +41,7 @@ if "relationships" not in st.session_state:
 
 if "chunks" not in st.session_state:
     st.session_state.chunks = 0
+
 # ---------------------------------------------------
 # Sidebar
 # ---------------------------------------------------
@@ -47,9 +50,12 @@ with st.sidebar:
 
     st.title("🧠 KAIRA")
 
-    st.caption(
-        "Enterprise Knowledge Graph\n"
-        "Hybrid GraphRAG Platform"
+    st.markdown(
+        """
+Enterprise Knowledge Graph
+
+Hybrid GraphRAG Platform
+"""
     )
 
     st.divider()
@@ -90,7 +96,8 @@ with st.sidebar:
 
     st.divider()
 
-    st.caption("KAIRA Version 1.0.0")
+    st.caption("KAIRA v1.0.0")
+
 # ---------------------------------------------------
 # Header
 # ---------------------------------------------------
@@ -98,92 +105,121 @@ with st.sidebar:
 st.title("🧠 KAIRA")
 
 st.markdown(
-    "### Enterprise Knowledge Graph & Hybrid GraphRAG Platform"
+    """
+### Enterprise Knowledge Graph & Hybrid GraphRAG Platform
+"""
 )
 
 st.divider()
 
 left, right = st.columns(
-    [1,2]
+    [1, 2]
 )
+
 # ---------------------------------------------------
-# Upload Section
+# Document Explorer
 # ---------------------------------------------------
 
 with left:
 
-    st.subheader("📂 Upload Document")
+    st.subheader("📂 Enterprise Documents")
 
-    uploaded_file = st.file_uploader(
-
-        "Select a document",
-
-        type=[
-            "pdf",
-            "docx",
-            "pptx",
-            "xlsx",
-            "xls",
-            "csv",
-            "json",
-            "txt"
-        ]
+    structured_path = Path(
+        "uploads/structured"
     )
 
-    upload = st.button(
-        "📤 Upload",
-        use_container_width=True
+    unstructured_path = Path(
+        "uploads/unstructured"
     )
 
-    if upload:
+    files = []
 
-        if uploaded_file is None:
+    if structured_path.exists():
 
-            st.warning(
-                "Please select a document."
-            )
+        for file in sorted(
+            structured_path.glob("*")
+        ):
 
-        else:
+            files.append(str(file))
 
-            file_path = (
-                f"uploads/{uploaded_file.name}"
-            )
+    if unstructured_path.exists():
 
-            try:
+        for file in sorted(
+            unstructured_path.glob("*")
+        ):
 
-                response = requests.post(
+            files.append(str(file))
 
-                    f"{API_URL}/ingestion/",
+    if files:
 
-                    json={
-                        "file_path": file_path
-                    }
+        selected_file = st.selectbox(
 
-                )
+            "Select Document",
 
-                if response.status_code == 200:
+            files
 
-                    data = response.json()
+        )
 
-                    st.success(
-                        data["message"]
+        if st.button(
+
+            "🚀 Ingest Document",
+
+            use_container_width=True
+
+        ):
+
+            with st.spinner(
+                "Building Knowledge Graph..."
+            ):
+
+                try:
+
+                    response = requests.post(
+
+                        f"{API_URL}/ingestion/",
+
+                        json={
+
+                            "file_path": selected_file
+
+                        }
+
                     )
 
-                    st.session_state.documents += 1
+                    if response.status_code == 200:
 
-                    st.session_state.nodes += data["nodes"]
+                        data = response.json()
 
-                    st.session_state.relationships += data["relationships"]
+                        st.success(
+                            data["message"]
+                        )
 
-                else:
+                        st.session_state.documents += 1
 
-                    st.error(
-                        response.json()["detail"]
-                    )
+                        st.session_state.nodes += data["nodes"]
 
-            except Exception as e:
+                        st.session_state.relationships += data["relationships"]
 
-                st.error(str(e))
+                    else:
+
+                        st.error(
+                            response.json()["detail"]
+                        )
+
+                except Exception as e:
+
+                    st.error(str(e))
+
+    else:
+
+        st.warning(
+            "No documents found inside uploads folder."
+        )
+
+# ---------------------------------------------------
+# Chat Section
+# ---------------------------------------------------
+
 with right:
 
     st.subheader("💬 Ask KAIRA")
@@ -191,9 +227,19 @@ with right:
     question = st.chat_input(
         "Ask anything about your enterprise..."
     )
+# ---------------------------------------------------
+# Conversation
+# ---------------------------------------------------
+
 st.divider()
 
-st.subheader("Conversation")
+st.subheader("📖 Conversation")
+
+if len(st.session_state.messages) == 0:
+
+    st.info(
+        "Start a conversation with KAIRA."
+    )
 
 for message in st.session_state.messages:
 
@@ -205,28 +251,107 @@ for message in st.session_state.messages:
             message["content"]
         )
 
+# ---------------------------------------------------
+# Query API
+# ---------------------------------------------------
+
 if question:
 
     st.session_state.messages.append(
+
         {
-            "role":"user",
-            "content":question
+
+            "role": "user",
+
+            "content": question
+
         }
+
     )
 
     with st.chat_message("user"):
 
         st.markdown(question)
 
-    response = "Waiting for FastAPI integration..."
-
     with st.chat_message("assistant"):
 
-        st.markdown(response)
+        with st.spinner(
+            "Thinking..."
+        ):
+
+            try:
+
+                response = requests.post(
+
+                    f"{API_URL}/query/",
+
+                    json={
+
+                        "question": question
+
+                    }
+
+                )
+
+                if response.status_code == 200:
+
+                    answer = response.json().get(
+
+                        "answer",
+
+                        "No answer returned."
+
+                    )
+
+                else:
+
+                    answer = response.json().get(
+
+                        "detail",
+
+                        "Unknown error."
+
+                    )
+
+            except Exception as e:
+
+                answer = str(e)
+
+            st.markdown(answer)
 
     st.session_state.messages.append(
+
         {
-            "role":"assistant",
-            "content":response
+
+            "role": "assistant",
+
+            "content": answer
+
         }
+
+    )
+# ---------------------------------------------------
+# Footer
+# ---------------------------------------------------
+
+st.divider()
+
+col1, col2, col3 = st.columns(3)
+
+with col1:
+
+    st.caption(
+        "🧠 KAIRA"
+    )
+
+with col2:
+
+    st.caption(
+        "Enterprise Knowledge Graph"
+    )
+
+with col3:
+
+    st.caption(
+        "Version 1.0.0"
     )
